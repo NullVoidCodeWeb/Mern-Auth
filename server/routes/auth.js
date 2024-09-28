@@ -5,6 +5,22 @@ const router = express.Router();
 const db = require('../config/db');
 const axios = require('axios');
 
+const verifyToken = (req, res, next) => {
+  const authHeader = req.header('Authorization');
+  if (!authHeader) return res.status(401).json({ message: 'Access denied' });
+
+  const token = authHeader.split(' ')[1]; // Extract the token from "Bearer <token>"
+  if (!token) return res.status(401).json({ message: 'Access denied' });
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified;
+    next();
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid token' });
+  }
+};
+
 /**
  * @swagger
  * /api/auth/register:
@@ -41,6 +57,7 @@ router.post('/register', async (req, res) => {
   try {
     const { username, email, password, recaptchaToken } = req.body;
 
+    //Recaptcha verification disabled for API testing
     // Verify reCAPTCHA
     const recaptchaVerify = await axios.post(
       `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
@@ -96,6 +113,7 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password, recaptchaToken } = req.body;
 
+    // Recaptcha verification disabled for API testing
     // Verify reCAPTCHA
     const recaptchaVerify = await axios.post(
       `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
@@ -132,6 +150,8 @@ router.post('/login', async (req, res) => {
  *   get:
  *     summary: Get all users
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: List of users
@@ -140,15 +160,28 @@ router.post('/login', async (req, res) => {
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   username:
- *                     type: string
- *                   email:
- *                     type: string
+ *                 $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
+ * 
+ * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         username:
+ *           type: string
+ *         email:
+ *           type: string
  */
+
 router.get('/users', async (req, res) => {
   try {
     const [users] = await db.query('SELECT id, username, email FROM users');
@@ -158,4 +191,16 @@ router.get('/users', async (req, res) => {
   }
 });
 
+//Switch to this route while posting api with postman
+
+// router.get('/users', verifyToken, async (req, res) => {
+//   try {
+//     const [users] = await db.query('SELECT id, username, email FROM users');
+//     res.json(users);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
 module.exports = router;
+

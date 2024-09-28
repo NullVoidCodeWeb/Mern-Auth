@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Link, useHistory } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
+import React, { useState } from "react";
+import axios from "axios";
+import { Link, useHistory } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Register() {
-  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [captchaValue, setCaptchaValue] = useState(null);
   const history = useHistory();
 
@@ -15,14 +19,14 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!captchaValue) return alert("Please verify you are human.");
-    
+
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      await axios.post("http://localhost:5000/api/auth/register", {
         ...formData,
-        recaptchaToken: captchaValue
+        recaptchaToken: captchaValue,
       });
       alert("Registration successful!");
-      history.push('/');
+      history.push("/");
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -64,14 +68,16 @@ function Register() {
           </div>
           <div className="mb-3">
             <ReCAPTCHA
-               // v2
-               sitekey="6LcpfVEqAAAAAFb9JhBUz4PGzefHp7cMQHI3eJtR"
+              // v2
+              sitekey="6LcpfVEqAAAAAFb9JhBUz4PGzefHp7cMQHI3eJtR"
               //v3
               // sitekey="6LfrflEqAAAAAMiEgeG2lGKot3dzaU2uLrWEiOnJ"
               onChange={setCaptchaValue}
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">Register</button>
+          <button type="submit" className="btn btn-primary w-100">
+            Register
+          </button>
         </form>
         <p className="mt-3 text-center">
           Already have an account? <Link to="/">Login</Link>

@@ -4,7 +4,7 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Your API',
+      title: 'Mern-Auth APIs For User Authentication',
       version: '1.0.0',
     },
   },

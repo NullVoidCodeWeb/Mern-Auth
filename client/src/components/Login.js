@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Link, useHistory } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
+import React, { useState } from "react";
+import axios from "axios";
+import { Link, useHistory } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [captchaValue, setCaptchaValue] = useState(null);
   const history = useHistory();
 
@@ -15,14 +15,17 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!captchaValue) return alert("Please verify you are human.");
-    
+
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
-        ...formData,
-        recaptchaToken: captchaValue
-      });
-      localStorage.setItem('token', response.data.token);
-      history.push('/users');
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          ...formData,
+          recaptchaToken: captchaValue,
+        }
+      );
+      localStorage.setItem("token", response.data.token);
+      history.push("/users");
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -56,13 +59,15 @@ function Login() {
           <div className="mb-3">
             <ReCAPTCHA
               // v2
-               sitekey="6LcpfVEqAAAAAFb9JhBUz4PGzefHp7cMQHI3eJtR"
+              sitekey="6LcpfVEqAAAAAFb9JhBUz4PGzefHp7cMQHI3eJtR"
               //v3
               // sitekey="6LfrflEqAAAAAMiEgeG2lGKot3dzaU2uLrWEiOnJ"
               onChange={setCaptchaValue}
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">Login</button>
+          <button type="submit" className="btn btn-primary w-100">
+            Login
+          </button>
         </form>
         <p className="mt-3 text-center">
           Don't have an account? <Link to="/register">Register</Link>

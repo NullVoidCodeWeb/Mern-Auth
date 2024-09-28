@@ -1,0 +1,19 @@
+{
+  "username": "shivamadhaoo",
+  "email": "shivam@gmail.com",
+  "password": "Shivam@123",
+  "recaptchaToken": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+}
+
+//Post - Register
+{
+  "username": "shivamadhaoo",
+  "email": "shivam@gmail.com",
+  "password": "Shivam@123"
+}
+
+//Post - Login
+{
+  "email": "shivam@gmail.com",
+  "password": "Shivam@123"
+}
