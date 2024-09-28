@@ -1,0 +1,10 @@
+# Node.js dependenciesl
+server/node_modules/
+client/node_modules/
+server/.env
+build/
+dist/
+.DS_Store
+.vscode/
+npm-debug.log
+yarn-error.log
