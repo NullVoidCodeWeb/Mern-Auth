@@ -7,7 +7,7 @@ EXPOSE 3000
 CMD ["npm", "start"]
 
 # # Build the Docker image
-# docker build -t server-app .
+# docker build -t client-app .
 
 # # Run the Docker container
-# docker run -p 5000:5000 server-app
+# docker run -p 5000:5000 client-app
