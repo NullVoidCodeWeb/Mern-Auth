@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link, useHistory } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [captchaValue, setCaptchaValue] = useState(null);
@@ -17,8 +19,8 @@ function Login() {
     if (!captchaValue) return alert("Please verify you are human.");
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+     // const response = await axios.post("http://localhost:5000/api/auth/login",
+        const response = await axios.post(`${apiUrl}/api/auth/login`,
         {
           ...formData,
           recaptchaToken: captchaValue,
@@ -55,11 +57,11 @@ function Login() {
               placeholder="Password"
               required
             />
-          </div>
+            </div>
           <div className="mb-3">
             <ReCAPTCHA
               // v2
-              sitekey="6LcpfVEqAAAAAFb9JhBUz4PGzefHp7cMQHI3eJtR"
+              sitekey="6Lfa4FMqAAAAABwqguta4JsNLerk77Mykal_d9bm"
               //v3
               // sitekey="6LfrflEqAAAAAMiEgeG2lGKot3dzaU2uLrWEiOnJ"
               onChange={setCaptchaValue}

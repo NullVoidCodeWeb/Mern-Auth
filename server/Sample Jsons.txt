@@ -5,6 +5,13 @@
   "recaptchaToken": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
 }
 
+{
+  "username": "manthanc",
+  "email": "manthan@gmail.com",
+  "password": "Manthan@123",
+   "recaptchaToken": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+}
+
 //Post - Register
 {
   "username": "shivamadhaoo",
@@ -14,6 +21,11 @@
 
 //Post - Login
 {
-  "email": "shivam@gmail.com",
-  "password": "Shivam@123"
+  "email": "vedant@gmail.com",
+  "password": "Vedant@123"
 }
+
+CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(255) NOT NULL,
+ email VARCHAR(255) NOT NULL UNIQUE,
+ password VARCHAR(255) NOT NULL );

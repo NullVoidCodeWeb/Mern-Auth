@@ -182,18 +182,8 @@ router.post('/login', async (req, res) => {
  *           type: string
  */
 
-router.get('/users', async (req, res) => {
-  try {
-    const [users] = await db.query('SELECT id, username, email FROM users');
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
 //Switch to this route while posting api with postman
-
-// router.get('/users', verifyToken, async (req, res) => {
+// router.get('/users', async (req, res) => {
 //   try {
 //     const [users] = await db.query('SELECT id, username, email FROM users');
 //     res.json(users);
@@ -201,6 +191,15 @@ router.get('/users', async (req, res) => {
 //     res.status(500).json({ message: 'Server error' });
 //   }
 // });
+
+router.get('/users', verifyToken, async (req, res) => {
+  try {
+    const [users] = await db.query('SELECT id, username, email FROM users');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = router;
 

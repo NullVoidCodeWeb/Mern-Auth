@@ -3,6 +3,8 @@ import axios from "axios";
 import { Link, useHistory } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 
+const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function Register() {
   const [formData, setFormData] = useState({
     username: "",
@@ -21,14 +23,24 @@ function Register() {
     if (!captchaValue) return alert("Please verify you are human.");
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      //const response = await axios.post("http://localhost:5000/api/auth/register", {
+      const response = await axios.post(`${apiUrl}/api/auth/register`, {
         ...formData,
         recaptchaToken: captchaValue,
       });
-      alert("Registration successful!");
-      history.push("/");
+      if (response && response.data) {
+        alert("Registration successful!");
+        history.push("/");
+      } else {
+        alert("Unexpected response from server");
+      }
     } catch (error) {
-      alert(error.response.data.message);
+      if (error.response && error.response.data) {
+        alert(error.response.data.message || "Registration failed");
+      } else {
+        alert("An error occurred during registration");
+      }
+      console.error("Registration error:", error);
     }
   };
 
@@ -69,7 +81,7 @@ function Register() {
           <div className="mb-3">
             <ReCAPTCHA
               // v2
-              sitekey="6LcpfVEqAAAAAFb9JhBUz4PGzefHp7cMQHI3eJtR"
+              sitekey="6Lfa4FMqAAAAABwqguta4JsNLerk77Mykal_d9bm"
               //v3
               // sitekey="6LfrflEqAAAAAMiEgeG2lGKot3dzaU2uLrWEiOnJ"
               onChange={setCaptchaValue}

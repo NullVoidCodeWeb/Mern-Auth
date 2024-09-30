@@ -3,32 +3,43 @@ services:
   client:
     build: ./client
     ports:
-      - "3300:3000"
+      - "3000:3000"
     depends_on:
       - server
+    environment:
+      - REACT_APP_API_URL=http://server:5000
+    networks:
+      - app-network
 
   server:
     build: ./server
     ports:
-      - "5500:5000"
+      - "5000:5000"
     depends_on:
       - db
     environment:
       - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=root
-      - DB_NAME=mern-auth-users
+      - DB_NAME=mern_auth
+    networks:
+      - app-network
 
   db:
     image: mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=mern-auth-users
+      - MYSQL_DATABASE=mern_auth
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
 
 volumes:
   mysql-data:
 
+networks:
+  app-network:
+    driver: bridge
 
 # docker-compose up --build
