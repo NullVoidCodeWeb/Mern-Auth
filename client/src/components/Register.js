@@ -11,19 +11,54 @@ function Register() {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
   const [captchaValue, setCaptchaValue] = useState(null);
   const history = useHistory();
 
+  const validateForm = () => {
+    let isValid = true;
+    let newErrors = {};
+
+    // Username validation
+    if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters long";
+      isValid = false;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
+    }
+
+    // Password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      newErrors.password = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear the error for the field being edited
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!captchaValue) return alert("Please verify you are human.");
+    
+    if (!validateForm()) return;
+    if (!captchaValue) {
+      alert("Please verify you are human.");
+      return;
+    }
 
     try {
-      //const response = await axios.post("http://localhost:5000/api/auth/register", {
       const response = await axios.post(`${apiUrl}/api/auth/register`, {
         ...formData,
         recaptchaToken: captchaValue,
@@ -52,38 +87,38 @@ function Register() {
           <div className="mb-3">
             <input
               name="username"
-              className="form-control"
+              className={`form-control ${errors.username ? 'is-invalid' : ''}`}
               onChange={handleChange}
               placeholder="Username"
               required
             />
+            {errors.username && <div className="invalid-feedback">{errors.username}</div>}
           </div>
           <div className="mb-3">
             <input
               name="email"
               type="email"
-              className="form-control"
+              className={`form-control ${errors.email ? 'is-invalid' : ''}`}
               onChange={handleChange}
               placeholder="Email"
               required
             />
+            {errors.email && <div className="invalid-feedback">{errors.email}</div>}
           </div>
           <div className="mb-3">
             <input
               name="password"
               type="password"
-              className="form-control"
+              className={`form-control ${errors.password ? 'is-invalid' : ''}`}
               onChange={handleChange}
               placeholder="Password"
               required
             />
+            {errors.password && <div className="invalid-feedback">{errors.password}</div>}
           </div>
           <div className="mb-3">
             <ReCAPTCHA
-              // v2
               sitekey="6Lfa4FMqAAAAABwqguta4JsNLerk77Mykal_d9bm"
-              //v3
-              // sitekey="6LfrflEqAAAAAMiEgeG2lGKot3dzaU2uLrWEiOnJ"
               onChange={setCaptchaValue}
             />
           </div>
