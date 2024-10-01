@@ -201,5 +201,27 @@ router.get('/users', verifyToken, async (req, res) => {
   }
 });
 
+router.delete('/users/:id', verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    // Check if the user exists
+    const [user] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+    
+    if (user.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Delete the user
+    await db.query('DELETE FROM users WHERE id = ?', [userId]);
+
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 module.exports = router;
 

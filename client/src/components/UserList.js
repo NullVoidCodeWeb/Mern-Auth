@@ -12,36 +12,57 @@ function UserList() {
   const history = useHistory();
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          history.push('/');
-          return;
-        }
-        setLoading(true);
-        const response = await axios.get(`${apiUrl}/api/auth/users`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setUsers(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        setError('Failed to fetch users. Please try again later.');
-        setLoading(false);
-        // If the error is due to an invalid token, redirect to login
-        if (error.response && error.response.status === 401) {
-          localStorage.removeItem('token');
-          history.push('/');
-        }
-      }
-    };
     fetchUsers();
-  }, [history]);
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        history.push('/');
+        return;
+      }
+      setLoading(true);
+      const response = await axios.get(`${apiUrl}/api/auth/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setError('Failed to fetch users. Please try again later.');
+      setLoading(false);
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem('token');
+        history.push('/');
+      }
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     history.push('/');
+  };
+
+  const handleDelete = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        history.push('/');
+        return;
+      }
+      await axios.delete(`${apiUrl}/api/auth/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers(users.filter(user => user.id !== userId));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setError('Failed to delete user. Please try again later.');
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem('token');
+        history.push('/');
+      }
+    }
   };
 
   if (loading) {
@@ -61,13 +82,16 @@ function UserList() {
             <p className="text-center">No users found.</p>
           ) : (
             <ul className="list-group">
-                            {users.map(user => (
+              {users.map(user => (
                 <li key={user.id} className="list-group-item d-flex justify-content-between align-items-center">
                   <div>
                     <strong>{user.username}</strong>
                     <span className="text-muted ms-3">{user.email}</span>
                   </div>
-                  <span className="badge bg-primary rounded-pill">User ID: {user.id}</span>
+                  <div>
+                    <span className="badge bg-primary rounded-pill me-2">User ID: {user.id}</span>
+                    <button onClick={() => handleDelete(user.id)} className="btn btn-sm btn-danger">Delete</button>
+                  </div>
                 </li>
               ))}
             </ul>
