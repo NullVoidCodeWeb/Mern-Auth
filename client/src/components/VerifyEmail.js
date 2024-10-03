@@ -3,18 +3,22 @@ import { useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 function VerifyEmail() {
-  const [message, setMessage] = useState('');
+  const [verificationStatus, setVerificationStatus] = useState('Verifying...');
   const { token } = useParams();
   const history = useHistory();
 
   useEffect(() => {
     const verifyEmail = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/verify-email/${token}`);
-        setMessage(response.data.message);
-        setTimeout(() => history.push('/login'), 3000);
+        const apiUrl = process.env.REACT_APP_API_URL;
+        console.log('API URL:', apiUrl); // For debugging
+        const response = await axios.get(`${apiUrl}/api/auth/verify/${token}`);
+
+        setVerificationStatus(response.data.message);
+        setTimeout(() => history.push('/'), 1500);
       } catch (error) {
-        setMessage(error.response?.data?.message || 'An error occurred during email verification');
+        console.error('Verification error:', error);
+        setVerificationStatus(error.response?.data?.message || 'Verification failed');
       }
     };
 
@@ -22,9 +26,8 @@ function VerifyEmail() {
   }, [token, history]);
 
   return (
-    <div>
-      <h2>Email Verification</h2>
-      <p>{message}</p>
+    <div className="container mt-5">
+      <div className="alert alert-info">{verificationStatus}</div>
     </div>
   );
 }
